@@ -4,6 +4,14 @@ import (
 	tb "gopkg.in/tucnak/telebot.v2"
 )
 
+var needEscape = make(map[rune]struct{})
+
+func init() {
+	for _, r := range []rune{'_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'} {
+		needEscape[r] = struct{}{}
+	}
+}
+
 func ConvertToMarkdownV2(text string, messageEntities []tb.MessageEntity) string {
 	insertions := make(map[int]string)
 	for _, e := range messageEntities {
@@ -38,6 +46,9 @@ func ConvertToMarkdownV2(text string, messageEntities []tb.MessageEntity) string
 	result := ""
 	for i, c := range text {
 		result += insertions[i]
+		if _, has := needEscape[c]; has {
+			result += `\`
+		}
 		result += string(c)
 	}
 	result += insertions[len(text)]
