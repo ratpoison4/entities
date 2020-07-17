@@ -1,6 +1,8 @@
 package entities
 
 import (
+	"unicode/utf16"
+
 	tb "gopkg.in/tucnak/telebot.v2"
 )
 
@@ -43,14 +45,18 @@ func ConvertToMarkdownV2(text string, messageEntities []tb.MessageEntity) string
 			insertions[e.Offset+e.Length] += after
 		}
 	}
-	result := ""
-	for i, c := range text {
-		result += insertions[i]
+
+	input := []rune(text)
+	var output []rune
+	utf16pos := 0
+	for _, c := range input {
+		output = append(output, []rune(insertions[utf16pos])...)
 		if _, has := needEscape[c]; has {
-			result += `\`
+			output = append(output, '\\')
 		}
-		result += string(c)
+		output = append(output, c)
+		utf16pos += len(utf16.Encode([]rune{c}))
 	}
-	result += insertions[len(text)]
-	return result
+	output = append(output, []rune(insertions[len(text)])...)
+	return string(output)
 }
