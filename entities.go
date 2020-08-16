@@ -57,6 +57,6 @@ func ConvertToMarkdownV2(text string, messageEntities []tb.MessageEntity) string
 		output = append(output, c)
 		utf16pos += len(utf16.Encode([]rune{c}))
 	}
-	output = append(output, []rune(insertions[len(text)])...)
+	output = append(output, []rune(insertions[utf16pos])...)
 	return string(output)
 }
