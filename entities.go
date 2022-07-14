@@ -3,7 +3,7 @@ package entities
 import (
 	"unicode/utf16"
 
-	tb "gopkg.in/tucnak/telebot.v2"
+	tb "gopkg.in/tucnak/telebot.v3"
 )
 
 var needEscape = make(map[rune]struct{})
@@ -39,6 +39,9 @@ func ConvertToMarkdownV2(text string, messageEntities []tb.MessageEntity) string
 		} else if e.Type == tb.EntityTextLink {
 			before = "["
 			after = "](" + e.URL + ")"
+		} else if e.Type == tb.EntitySpoiler {
+			before = "||"
+			after = "||"
 		}
 		if before != "" {
 			insertions[e.Offset] += before
